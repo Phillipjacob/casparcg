@@ -36,6 +36,7 @@ if (ENABLE_VULKAN)
 		producer/vulkan_frame_import.h
 		producer/vulkan_frame_import.cpp
 		producer/vulkan_video_strategy.cpp
+		producer/cuda_video_strategy.cpp
 	)
 endif ()
 
