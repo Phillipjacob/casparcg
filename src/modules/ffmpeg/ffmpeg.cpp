@@ -78,8 +78,7 @@ void log_callback(void* ptr, int level, const char* fmt, va_list vl)
             if ((parent != nullptr) && (*parent != nullptr))
                 std::snprintf(line, sizeof(line), "[%s @ %p] ", log_item_name(*parent, parent), parent);
         }
-        std::snprintf(
-            line + strlen(line), sizeof(line) - strlen(line), "[%s @ %p] ", log_item_name(avc, ptr), ptr);
+        std::snprintf(line + strlen(line), sizeof(line) - strlen(line), "[%s @ %p] ", log_item_name(avc, ptr), ptr);
     }
 
     std::vsnprintf(line + strlen(line), sizeof(line) - strlen(line), fmt, vl);
@@ -128,10 +127,17 @@ void init(const core::module_dependencies& dependencies)
     // Not a channel command, see prefetch_command. A channel command named PREFETCH would take over
     // "PREFETCH 1 url".
     dependencies.command_repository->register_command(L"Media Commands", L"PREFETCH", prefetch_command, 1);
+
+#ifdef ENABLE_VULKAN
+    set_vulkan_accelerator_device(dependencies.accelerator_device);
+#endif
 }
 
 void uninit()
 {
+#ifdef ENABLE_VULKAN
+    set_vulkan_accelerator_device(nullptr);
+#endif
     // avfilter_uninit();
     prefetch_uninit();
     avformat_network_deinit();
