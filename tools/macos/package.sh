@@ -554,6 +554,27 @@ for lib in "$FRAMEWORKS"/*.dylib; do
     fi
 done
 
+# Homebrew's sdl2 is sdl2-compat, which loads SDL3 at runtime from next to
+# itself (@loader_path/libSDL3.dylib) and aborts at startup without it. Nothing
+# links SDL3, so the dependency discovery above can't find it.
+for sdl2 in "$FRAMEWORKS"/libSDL2*.dylib; do
+    if [ -f "$sdl2" ] && [ ! -L "$sdl2" ] && grep -q "sdl2-compat" "$sdl2"; then
+        SDL3_LIB=""
+        for candidate in /opt/homebrew/opt/sdl3/lib/libSDL3.dylib /usr/local/opt/sdl3/lib/libSDL3.dylib; do
+            if [ -f "$candidate" ]; then
+                SDL3_LIB="$candidate"
+                break
+            fi
+        done
+        if [ -n "$SDL3_LIB" ]; then
+            echo "Bundling SDL3 for sdl2-compat..."
+            copy_lib "$SDL3_LIB"
+        else
+            echo "  Warning: SDL2 is sdl2-compat but SDL3 was not found. Install via: brew install sdl3"
+        fi
+    fi
+done
+
 # ============================================================================
 # Handle Vulkan ICD (Installable Client Driver) configuration
 # ============================================================================
