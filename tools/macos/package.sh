@@ -810,6 +810,8 @@ echo ""
 
 # Create Info.plist
 # Note: We use casparcg-launcher as the executable to set up library paths
+# LSAppNapIsDisabled: CasparCG plays out in real time, usually with no visible
+# window, which is when App Nap would throttle its timers
 echo "Creating Info.plist..."
 cat > "$CONTENTS/Info.plist" << EOF
 <?xml version="1.0" encoding="UTF-8"?>
@@ -841,6 +843,8 @@ cat > "$CONTENTS/Info.plist" << EOF
     <key>NSHighResolutionCapable</key>
     <true/>
     <key>NSSupportsAutomaticGraphicsSwitching</key>
+    <true/>
+    <key>LSAppNapIsDisabled</key>
     <true/>
     <key>NSPrincipalClass</key>
     <string>NSApplication</string>
